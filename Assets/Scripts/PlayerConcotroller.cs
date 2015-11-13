@@ -1,0 +1,60 @@
+﻿using UnityEngine;
+using System.Collections;
+
+public class PlayerConcotroller : MonoBehaviour
+{
+
+    public float speed;
+    public float tiltSide;
+    public float tiltFront;
+
+
+    public GameObject bolt;
+    public Transform shotSpawn;
+    public float fireRate;
+    private float nextFire = 0f;
+
+    void Start()
+    {
+
+    }
+
+    void Update()
+    {
+        if ((Input.GetButton("Fire1") || Input.GetKeyDown(KeyCode.Space)) && Time.time > nextFire)
+        {
+            nextFire = Time.time + fireRate;
+            Instantiate(bolt, shotSpawn.position, Quaternion.identity);
+        }
+
+    }
+
+    void FixedUpdate()
+    {
+        float inputHoriz = Input.GetAxis("Horizontal");
+        float inputVert = Input.GetAxis("Vertical");
+
+        Rigidbody rigid = GetComponent<Rigidbody>();
+
+        rigid.velocity = new Vector3(inputHoriz, 0.0f, inputVert) * speed;
+        rigid.rotation = Quaternion.Euler(new Vector3(rigid.velocity.z * tiltFront, 0.0f, rigid.velocity.x * -tiltSide));
+    }
+
+    void LateUpdate()
+    {
+        // camera borders
+        float left = Camera.main.ViewportToWorldPoint(Vector3.zero).x * 0.9f;
+        float right = Camera.main.ViewportToWorldPoint(Vector3.one).x * 0.9f;
+        float bottom = Camera.main.ViewportToWorldPoint(Vector3.zero).z * 0.7f;
+        float top = Camera.main.ViewportToWorldPoint(Vector3.one).z * 0.55f;
+
+        Rigidbody rigid = GetComponent<Rigidbody>();
+
+        rigid.position = new Vector3
+           (
+               Mathf.Clamp(rigid.position.x, left, right),
+               Mathf.Clamp(rigid.position.y, -3f, 3f),
+               Mathf.Clamp(rigid.position.z, bottom, top)
+           );
+    }
+}
