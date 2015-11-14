@@ -5,6 +5,9 @@ public class GameController : MonoBehaviour
 {
 
     public GameObject[] hazards;
+    public GameObject[] powerUps;
+
+    public int powerUpAfter;
 
     public float startWait;
     public float waveWait;
@@ -16,6 +19,7 @@ public class GameController : MonoBehaviour
     public GUIText gameOverText;
     public GUIText playerHealthText;
     private bool gameOver, restart;
+
     // Use this for initialization
     void Start()
     {
@@ -46,12 +50,23 @@ public class GameController : MonoBehaviour
             waveCount++;
             for (int i = 0; i < hazardsInWave; i++)
             {
-                GameObject hazard = hazards[Random.Range(0, hazards.Length)];
+                GameObject flyingObject;
+
+                // determine if we should throw hazard or power up.
+                if (Random.Range(0, powerUpAfter + 1) == powerUpAfter)
+                {
+                    flyingObject = powerUps[Random.Range(0, powerUps.Length)];
+                }
+                else
+                {
+                    flyingObject = hazards[Random.Range(0, hazards.Length)];
+                }
                 float left = Camera.main.ViewportToWorldPoint(Vector3.zero).x;
                 float right = Camera.main.ViewportToWorldPoint(Vector3.one).x;
                 float top = Camera.main.ViewportToWorldPoint(Vector3.one).z;
-                GameObject aster = Instantiate(hazard, new Vector3(Random.Range(left, right), 0f, top + 5), Quaternion.identity) as GameObject;
-                aster.GetComponent<Mover>().randomRange += 2 + waveCount;
+                GameObject instance = Instantiate(flyingObject, new Vector3(Random.Range(left, right), 0f, top + 5), Quaternion.identity) as GameObject;
+                instance.GetComponent<Mover>().randomRange += 2 + waveCount;
+
                 yield return new WaitForSeconds(spawnWait);
             }
             yield return new WaitForSeconds(waveWait);

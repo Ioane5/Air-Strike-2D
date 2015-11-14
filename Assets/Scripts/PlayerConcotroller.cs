@@ -65,8 +65,7 @@ public class PlayerConcotroller : MonoBehaviour
     public void UpdateHealth(int delta)
     {
         currHealth += delta;
-        if (currHealth < 0)
-            currHealth = 0;
+        currHealth = Mathf.Clamp(currHealth, 0, health);
         gameController.UpdatePlayerHealth(currHealth, health);
         if (currHealth == 0)
         {
