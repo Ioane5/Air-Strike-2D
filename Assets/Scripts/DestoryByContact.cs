@@ -4,7 +4,7 @@ using System.Collections;
 public class DestoryByContact : MonoBehaviour
 {
 
-    public GameObject asteriodExplosion;
+    public GameObject explosion;
     private GameController gameController;
     public int destroyScore;
     public int playerDamage;
@@ -30,10 +30,17 @@ public class DestoryByContact : MonoBehaviour
         }
         else
         {
-            Destroy(other.gameObject);
+            if (other.tag != "EnemyShip")
+            {
+                Destroy(other.gameObject);
+            }
         }
-        Instantiate(asteriodExplosion, transform.position, transform.rotation);
-        gameController.addScore(destroyScore);
-        Destroy(gameObject);
+
+        if (!(tag == "EnemyShip" && other.tag == "Asteroid"))
+        {
+            Instantiate(explosion, transform.position, transform.rotation);
+            gameController.addScore(destroyScore);
+            Destroy(gameObject);
+        }
     }
 }
