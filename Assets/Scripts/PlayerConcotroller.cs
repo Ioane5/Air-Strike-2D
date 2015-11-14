@@ -4,9 +4,13 @@ using System.Collections;
 public class PlayerConcotroller : MonoBehaviour
 {
 
+    public GameObject explosion;
+    public GameController gameController;
     public float speed;
     public float tiltSide;
     public float tiltFront;
+    public int health;
+    private int currHealth;
 
 
     public GameObject bolt;
@@ -16,7 +20,7 @@ public class PlayerConcotroller : MonoBehaviour
 
     void Start()
     {
-
+        currHealth = health;
     }
 
     void Update()
@@ -56,5 +60,19 @@ public class PlayerConcotroller : MonoBehaviour
                Mathf.Clamp(rigid.position.y, -3f, 3f),
                Mathf.Clamp(rigid.position.z, bottom, top)
            );
+    }
+
+    public void UpdateHealth(int delta)
+    {
+        currHealth += delta;
+        if (currHealth < 0)
+            currHealth = 0;
+        gameController.UpdatePlayerHealth(currHealth, health);
+        if (currHealth == 0)
+        {
+            Instantiate(explosion, transform.position, transform.rotation);
+            gameController.GameOver();
+            Destroy(gameObject);
+        }
     }
 }

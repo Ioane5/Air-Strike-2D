@@ -4,7 +4,7 @@ using System.Collections;
 public class GameController : MonoBehaviour
 {
 
-    public GameObject hazard;
+    public GameObject[] hazards;
 
     public float startWait;
     public float waveWait;
@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
     public GUIText scoreText;
     public GUIText restartText;
     public GUIText gameOverText;
+    public GUIText playerHealthText;
     private bool gameOver, restart;
     // Use this for initialization
     void Start()
@@ -45,6 +46,7 @@ public class GameController : MonoBehaviour
             waveCount++;
             for (int i = 0; i < hazardsInWave; i++)
             {
+                GameObject hazard = hazards[Random.Range(0, hazards.Length)];
                 float left = Camera.main.ViewportToWorldPoint(Vector3.zero).x;
                 float right = Camera.main.ViewportToWorldPoint(Vector3.one).x;
                 float top = Camera.main.ViewportToWorldPoint(Vector3.one).z;
@@ -78,5 +80,12 @@ public class GameController : MonoBehaviour
     {
         gameOver = true;
         gameOverText.enabled = true;
+    }
+
+    public void UpdatePlayerHealth(int newHealth, int maxHealth)
+    {
+        double pertentage = (double)newHealth / maxHealth;
+        pertentage *= 100;
+        playerHealthText.text = "Health : " + (int)pertentage + "%";
     }
 }

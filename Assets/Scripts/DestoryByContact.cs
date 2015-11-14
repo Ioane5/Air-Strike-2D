@@ -4,17 +4,15 @@ using System.Collections;
 public class DestoryByContact : MonoBehaviour
 {
 
-
     public GameObject asteriodExplosion;
-    public GameObject playerExplosion;
-
     private GameController gameController;
     public int destroyScore;
+    public int playerDamage;
     // Use this for initialization
     void Start()
     {
         GameObject game = GameObject.FindWithTag("GameController");
-        if(game != null)
+        if (game != null)
         {
             gameController = game.GetComponent<GameController>();
         }
@@ -26,15 +24,16 @@ public class DestoryByContact : MonoBehaviour
         {
             return;
         }
-        if(other.tag == "Player")
+        if (other.tag == "Player")
         {
-            // instanciate player explosion only if player were hit by asteroid.
-            Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
-            gameController.GameOver();
+            other.gameObject.GetComponent<PlayerConcotroller>().UpdateHealth(-playerDamage);
+        }
+        else
+        {
+            Destroy(other.gameObject);
         }
         Instantiate(asteriodExplosion, transform.position, transform.rotation);
         gameController.addScore(destroyScore);
-        Destroy(other.gameObject);
         Destroy(gameObject);
     }
 }
