@@ -6,24 +6,77 @@ public class GameController : MonoBehaviour
 
     public GameObject hazard;
 
+    public float startWait;
+    public float waveWait;
+    public float hazardsInWave;
+    public float spawnWait;
+    private int score;
+    public GUIText scoreText;
+    public GUIText restartText;
+    public GUIText gameOverText;
+    private bool gameOver, restart;
     // Use this for initialization
     void Start()
     {
-        SpawnHazards();
+        gameOver = false;
+        restart = false;
+        UpdateScore();
+        StartCoroutine(SpawnHazards());
     }
 
-    void SpawnHazards()
-    {
 
-        float left = Camera.main.ViewportToWorldPoint(Vector3.zero).x;
-        float right = Camera.main.ViewportToWorldPoint(Vector3.one).x;
-        float top = Camera.main.ViewportToWorldPoint(Vector3.one).z;
-        Instantiate(hazard, new Vector3(Random.Range(left, right), 0f, top + 5), Quaternion.identity);
-    }
-
-    // Update is called once per frame
     void Update()
     {
+        if (restart)
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Application.LoadLevel(Application.loadedLevel);
+            }
+        }
+    }
 
+    IEnumerator SpawnHazards()
+    {
+        yield return new WaitForSeconds(2);
+        int waveCount = 0;
+        while (true)
+        {
+            waveCount++;
+            for (int i = 0; i < hazardsInWave; i++)
+            {
+                float left = Camera.main.ViewportToWorldPoint(Vector3.zero).x;
+                float right = Camera.main.ViewportToWorldPoint(Vector3.one).x;
+                float top = Camera.main.ViewportToWorldPoint(Vector3.one).z;
+                GameObject aster = Instantiate(hazard, new Vector3(Random.Range(left, right), 0f, top + 5), Quaternion.identity) as GameObject;
+                aster.GetComponent<Mover>().randomRange += 2 + waveCount;
+                yield return new WaitForSeconds(spawnWait);
+            }
+            yield return new WaitForSeconds(waveWait);
+
+            if (gameOver)
+            {
+                restart = true;
+                restartText.enabled = true;
+                break;
+            }
+        }
+    }
+
+    void UpdateScore()
+    {
+        scoreText.text = "Score : " + score;
+    }
+
+    public void addScore(int newScore)
+    {
+        this.score += newScore;
+        UpdateScore();
+    }
+
+    public void GameOver()
+    {
+        gameOver = true;
+        gameOverText.enabled = true;
     }
 }

@@ -4,9 +4,11 @@ using System.Collections;
 public class Mover : MonoBehaviour {
 
     public float speed;
+    public float randomRange;
 	// Use this for initialization
 	void Start () {
-        GetComponent<Rigidbody>().velocity = transform.forward * speed;
+        float randSpeed = Random.Range(speed - randomRange,speed);
+        GetComponent<Rigidbody>().velocity = transform.forward * randSpeed;
 	}
 	
 	// Update is called once per frame
